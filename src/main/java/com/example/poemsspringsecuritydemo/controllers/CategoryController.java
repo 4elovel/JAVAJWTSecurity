@@ -6,8 +6,14 @@ import com.example.poemsspringsecuritydemo.services.CategoryService;
 import com.example.poemsspringsecuritydemo.services.PoemService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,5 +50,27 @@ public class CategoryController {
     @GetMapping("/{categoryId}/poems/top")
     public List<PoemDTO> getTopPoemsInCategory(@PathVariable Long categoryId) {
         return poemService.getTopPoemsInCategory(categoryId);
+    }
+
+    @PostMapping("/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> addCategory(@RequestBody CategoryDTO categoryDto) {
+        categoryService.addCategory(categoryDto);
+        return ResponseEntity.ok("Category added successfully.");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok("Category deleted successfully.");
+    }
+
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> updateCategory(@PathVariable Long id,
+            @RequestBody CategoryDTO categoryDto) {
+        categoryService.updateCategory(id, categoryDto);
+        return ResponseEntity.ok("Category updated successfully.");
     }
 }
